@@ -16,7 +16,7 @@ endif
 .PHONY: clean
 .PHONY: test
 
-PATHU = unity/src
+PATHU = Unity/src
 PATHS = ..
 PATHT = src
 PATHB = build
@@ -62,7 +62,7 @@ $(PATHR)/Test%.txt: $(PATHB)/%.$(TARGET_EXTENSION)
 	-./$< > $@ 2>&1
 
 $(PATHB)/%.$(TARGET_EXTENSION): $(OBJECTS) #$(PATHD)/Test%.d
-	$(LINK) -o $@ $^
+	$(LINK) -o $@ $^ -lm
 
 $(PATHO)/%.o: %.c 
 	$(COMPILE) $(CFLAGS) $< -o $@
