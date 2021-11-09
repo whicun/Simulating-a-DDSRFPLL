@@ -9,12 +9,15 @@
 #include "TestDDSRFPLL.h"
 #include "InvKMT_DDSRFPLL.h"
 
+#include <stdio.h>
+
 //============= Constants variables ===========//                          
 const float Ts = TSAMPLE_GRID;                                             
 const float Fs = FREQ_GRID_SAMPLE;                                         
 const unsigned int N_MEDIOS = 3450;                                        
 
 sParameters parameters = SYS_PARAMETERS_DEFAULTS;   
+sDDSRFPLL2 Referencia = DDSRFPLL2_DEFAULTS;
 
  // Parámetros de configuración del sistema                                
  CONFIG config;                                                            
@@ -39,107 +42,71 @@ const float coef_400_RAD_SEG[2] = FILTER_COEF_400_RAD_SEG_20kHz;
 const float coef_800_RAD_SEG[2] = FILTER_COEF_800_RAD_SEG_20kHz;
 //================= Fin Constantes para los filtros ============//
 
+// Tipos de PLLs.                  
+enum PLL_Type {                    
+    PI_PLL    = 0,                 
+    FAST_PLL  = 1,                 
+};
+
+enum PLL_Type PLL_type = PI_PLL;   
+
+extern float Ua[];
+extern float Ub[];
+extern float Uc[];
+
+
+// DDSRFPLL internal variables
+extern float omega;
+extern float freq;
+extern float vco;
+extern float theta;
+extern float sinth;
+extern float costh;
+extern float sin2th;
+extern float cos2th;
 
 void setUp(void)
 {
+
+    printf("SetUp text\n");
 }
 
 void tearDown(void)
 {
+    printf("tearDown text\n");
 }
 
-/*
- * AS EXAMPLE... 
- 
-char array[ARRAY_LEN];
-circular_buffer_handler cbh;
-
-char texto[ARRAY_LEN];
-void test_circular_buffer_initialization(void)
+void test_ddsrfpll(void)
 {
 
-TEST_ASSERT_NOT_NULL_MESSAGE((cbh = circular_buffer_init((uint8_t *)array, ARRAY_LEN)),"cbh == NULL" );
-TEST_ASSERT_EQUAL_UINT16_MESSAGE(ARRAY_LEN, circular_buffer_size(cbh), "Wrong buffer size");
-}
-
-void test_load_entire_buffer(void)
-{
-    char aux[ARRAY_LEN];
-
-    for(int i = 0; i<ARRAY_LEN-1 ; i++)
-	TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_put(cbh, texto[i]),"No more space");
-
-    TEST_ASSERT_EQUAL_UINT16_MESSAGE(ARRAY_LEN-1, circular_buffer_count(cbh), "Wrong length");
-    TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_drop(cbh, aux, ARRAY_LEN-1), "couldent dump");
-    TEST_ASSERT_EQUAL_UINT16_MESSAGE(0, circular_buffer_count(cbh), "Wrong buffer size");
-    TEST_ASSERT_UINT8_ARRAY_WITHIN_MESSAGE(0, texto, aux, ARRAY_LEN-1, aux);
-
-}
-
-void test_load_partial_buffer(void)
-{
-    char aux[ARRAY_LEN];
-
-    for (int a = 1; a < ARRAY_LEN; a++)
+    for(int i = 1; i < 4001; i++) 
     {
-	for(int i = 0; i < a ; i++)
-	    TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_put(cbh, texto[i]),"No more space");
+        // Acondiciona para que quede en pu y usar las mismas ganancias en los PLLs!
+        Referencia.abc.a = 1+Ua[i];
+        Referencia.abc.b = 1+Ub[i];
+        Referencia.abc.c = 1+Uc[i]; 
 
-	TEST_ASSERT_EQUAL_UINT16_MESSAGE(a, circular_buffer_count(cbh), "Wrong length");
-	TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_drop(cbh, aux, a), "couldent dump");
-	TEST_ASSERT_EQUAL_UINT16_MESSAGE(0, circular_buffer_count(cbh), "Wrong buffer size");
-	TEST_ASSERT_UINT8_ARRAY_WITHIN_MESSAGE(0, texto, aux, a, aux);
+
+        InvKMT_DDSRFPLL_Hybrid(&Referencia, PLL_type);
+        printf("%f, %f, %f\n",omega,vco,freq);
     }
 
+
+TEST_ASSERT_TRUE(1);
+
 }
-
-void test_push_buffer(void)
-{
-    char aux[ARRAY_LEN];
-
-    while(0 == circular_buffer_put(cbh, 'a'))
-    {;}
-
-    for(int i = 0; i < ARRAY_LEN-1; i++)
-	circular_buffer_push(cbh, texto[i]);
-
-
-    TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_drop(cbh, aux, ARRAY_LEN -1 ), "couldent dump");
-    TEST_ASSERT_EQUAL_UINT16_MESSAGE(0, circular_buffer_count(cbh), "Wrong buffer size");
-    TEST_ASSERT_UINT8_ARRAY_WITHIN_MESSAGE(0, texto, aux, ARRAY_LEN-1, aux);
-}
-
-void test_put_pop(void)
-{
-    char aux;
-
-    circular_buffer_reset(cbh);
-    for(int a = 0; a < 100 ; a++)
-    {
-	for(int i = 0; i < ARRAY_LEN; i++)
-	{
-	    TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_put(cbh, texto[i]),"No more space");
-	    TEST_ASSERT_EQUAL_INT8_MESSAGE(0, circular_buffer_pop(cbh, (uint8_t *) &aux), "pop");
-	    TEST_ASSERT_EQUAL_CHAR_MESSAGE(texto[i],aux,"asd");
-
-	}
-    }
-}
-
-void test_circular_buffer_free(void)
-{
-TEST_ASSERT_NULL_MESSAGE(circular_buffer_free(&cbh), "cbh != NULL" );
-}
-
-*/
 
 int main(void)
 {
+ 
+ config.inv_ctrl_pll_kp = 6.00;
+ config.inv_ctrl_pll_ki = 75.00;
 
 UNITY_BEGIN();
 
+RUN_TEST(test_ddsrfpll);
+
 /*
-RUN_TEST(test_circular_buffer_initialization);
 for(int i = 0; i<1000; i++)
 {
 RUN_TEST(test_put_pop);
