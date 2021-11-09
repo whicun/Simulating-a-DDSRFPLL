@@ -99,3 +99,14 @@ Ua_ideal=Ua;
 % end
 % Ua_ideal=cos(theta);
 
+%% Plot and check data
+
+plot(t,Ua,t,Ub,t,Uc);
+
+legend('Ua', 'Ub', 'Uc');
+
+%% Export Data
+fid = fopen('data.c','wt');
+for i=1:lenght(Ua)
+    fprintf(fid,'%.2f\n',Ua[i]);
+end
