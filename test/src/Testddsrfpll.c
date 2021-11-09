@@ -1,7 +1,52 @@
+
 #include "unity.h"
 
+#include "DSP2833x_Device.h"
+
+#include "InvKMT_structs.h"
+
+#include "objects.h"
 #include "TestDDSRFPLL.h"
 #include "InvKMT_DDSRFPLL.h"
+
+//============= Constants variables ===========//                          
+const float Ts = TSAMPLE_GRID;                                             
+const float Fs = FREQ_GRID_SAMPLE;                                         
+const unsigned int N_MEDIOS = 3450;                                        
+
+sParameters parameters = SYS_PARAMETERS_DEFAULTS;   
+
+ // Parámetros de configuración del sistema                                
+ CONFIG config;                                                            
+                                                                           
+ // Variables del Sistema                                                  
+ VARS vars;                                                                
+ VARS_RATED vars_rated;                                                    
+
+ //================= Constantes para los filtros ============//
+const float coef_2000Hz[2]  = FILTER_COEF_2000HZ_20kHz;
+const float coef_1000Hz[2]  = FILTER_COEF_1000HZ_20kHz;
+const float coef_500Hz[2]   = FILTER_COEF_500HZ_20kHz;
+const float coef_400Hz[2]   = FILTER_COEF_400HZ_20kHz;
+const float coef_350Hz[2]   = FILTER_COEF_350HZ_20kHz;
+const float coef_200Hz[2]   = FILTER_COEF_200HZ_20kHz;
+const float coef_100Hz[2]   = FILTER_COEF_100HZ_20kHz;
+const float coef_50Hz[2]    = FILTER_COEF_50HZ_20kHz;
+const float coef_25Hz[2]    = FILTER_COEF_25HZ_20kHz;
+const float coef_10Hz[2]    = FILTER_COEF_10HZ_20kHz;
+const float coef_1Hz[2]     = FILTER_COEF_1HZ_20kHz;
+const float coef_400_RAD_SEG[2] = FILTER_COEF_400_RAD_SEG_20kHz;
+const float coef_800_RAD_SEG[2] = FILTER_COEF_800_RAD_SEG_20kHz;
+//================= Fin Constantes para los filtros ============//
+
+
+void setUp(void)
+{
+}
+
+void tearDown(void)
+{
+}
 
 /*
  * AS EXAMPLE... 
@@ -10,25 +55,6 @@ char array[ARRAY_LEN];
 circular_buffer_handler cbh;
 
 char texto[ARRAY_LEN];
-
-void setUp(void)
-{
-    char a = '0';
-    for(int i = 0; i < ARRAY_LEN; i++){
-	a++;
-	if(a > 'z')
-	    a = '0';
-	
-	texto[i] = a;
-    }
-
-    //printf(texto);
-}
-
-void tearDown(void)
-{
-}
-
 void test_circular_buffer_initialization(void)
 {
 
