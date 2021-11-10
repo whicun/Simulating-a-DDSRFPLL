@@ -108,7 +108,7 @@
 #define P_INV_NOM				30.0	// kW
 #define V_INV_NOM				220.0	// Volt
 #define I_INV_NOM				(1000*P_INV_NOM*INV_RAIZ3/V_INV_NOM) // Amp
-#define	FREQ_INV_NOM			60	// Hz (COMPLETAR) 50 Hz / 60 Hz
+#define	FREQ_INV_NOM			50	// Hz (COMPLETAR) 50 Hz / 60 Hz
 #define DELTA_FREQ_INV    		1.5//2.5     // Delta de frecuencia en Hz.
 #define FREQ_INV_MIN      		(FREQ_INV_NOM - DELTA_FREQ_INV)   // Hz.
 #define FREQ_INV_MAX      		(FREQ_INV_NOM + DELTA_FREQ_INV)   // Hz.
