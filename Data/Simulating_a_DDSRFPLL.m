@@ -149,19 +149,19 @@ end
     fclose(fid);
 
 % Export Data to a .h file
-fid = fopen('data.h','wt');
+fid_h = fopen('data.h','wt');
 
-    fprintf(fid,'#ifndef __DATA_H__\n');
-    fprintf(fid,'#define __DATA_H__\n');
-    fprintf(fid,'\n');
-    fprintf(fid,'#define LEN_Un %d \n', length(Ua));
-    fprintf(fid,'\n');
-    fprintf(fid,'extern float Ua[];\n');
-    fprintf(fid,'extern float Ub[];\n');
-    fprintf(fid,'extern float Uc[];\n');
-    fprintf(fid,'#endif');
+    fprintf(fid_h,'#ifndef __DATA_H__\n');
+    fprintf(fid_h,'#define __DATA_H__\n');
+    fprintf(fid_h,'\n');
+    fprintf(fid_h,'#define LEN_Un %d \n', length(Ua));
+    fprintf(fid_h,'\n');
+    fprintf(fid_h,'extern float Ua[];\n');
+    fprintf(fid_h,'extern float Ub[];\n');
+    fprintf(fid_h,'extern float Uc[];\n');
+    fprintf(fid_h,'#endif');
 
-fclose(fid);
+fclose(fid_h);
 
 %% plot results
 % Import data
