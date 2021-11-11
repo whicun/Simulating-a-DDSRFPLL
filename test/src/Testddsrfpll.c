@@ -9,6 +9,8 @@
 #include "TestDDSRFPLL.h"
 #include "InvKMT_DDSRFPLL.h"
 
+#include "data.h"
+
 #include <stdio.h>
 
 //============= Constants variables ===========//                          
@@ -50,11 +52,6 @@ enum PLL_Type {
 
 enum PLL_Type PLL_type = PI_PLL;   
 
-extern float Ua[];
-extern float Ub[];
-extern float Uc[];
-
-
 // DDSRFPLL internal variables
 extern float omega;
 extern float freq;
@@ -79,16 +76,21 @@ void tearDown(void)
 void test_ddsrfpll(void)
 {
 
-    for(int i = 1; i < 4001; i++) 
-    {
-        // Acondiciona para que quede en pu y usar las mismas ganancias en los PLLs!
-        Referencia.abc.a = 1+Ua[i];
-        Referencia.abc.b = 1+Ub[i];
-        Referencia.abc.c = 1+Uc[i]; 
+    for(int a = 0; a < 1; a++)
+        for(int i = 0; i < LEN_Un; i++) 
+        {
+            // Acondiciona para que quede en pu y usar las mismas ganancias en los PLLs!
+            Referencia.abc.a =  Ua[i];
+            Referencia.abc.b =  Ub[i];
+            Referencia.abc.c =  Uc[i]; 
 
+            InvKMT_DDSRFPLL_Hybrid(&Referencia, PLL_type);
+            printf("%f %f %f %f %f\n",Referencia.Qpf,Referencia.Dpf, Referencia.alfabeta.alfa, Referencia.alfabeta.beta, costh);
 
-        InvKMT_DDSRFPLL_Hybrid(&Referencia, PLL_type);
-        printf("%f, %f, %f\n",omega,vco,freq);
+            if(vco > DOSPI){                          
+                //StopCpuTimer0();                      
+                vco = 0;                              
+            }                                         
     }
 
 
